@@ -1,0 +1,94 @@
+# ═══════════════════════════════════════════════════════════════
+#  Render.com Blueprint — backend uchun
+# ═══════════════════════════════════════════════════════════════
+#
+#  Render → New → Blueprint → shu repo → Apply
+#  Render bu faylni o'qib, servisni o'zi yaratadi.
+#
+#  Vercel'dan farqi: Render'da DOIMIY JARAYON bo'ladi, ya'ni
+#    ✅ long polling ishlaydi — webhook sozlash umuman kerak emas
+#    ✅ DB heartbeat va oldindan isitilgan ulanishlar saqlanadi
+#    ✅ katalog keshi instansiyada tirik qoladi (~5 ms javob)
+#
+#  MUHIM: region `ohio` tanlangan, chunki Neon bazasi ham `us-east-2`
+#  (Ohio) da. Server bilan baza yonma-yon bo'lgani uchun har bir SQL
+#  so'rov ~150 ms o'rniga ~2 ms bo'ladi.
+
+services:
+  - type: web
+    name: pizza-api
+    runtime: node
+    plan: free # ⚠️ bepul tarif 15 daqiqa jimlikdan keyin uxlaydi (pastga qarang)
+    region: ohio
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Doimiy serverda long polling ishlatiladi — PUBLIC_URL kerak emas.
+      # Agar webhook xohlasangiz, bu yerga servis manzilini yozing.
+      - key: PUBLIC_URL
+        value: ''
+
+      # ── Quyidagilarni Render dashboard'ida bir marta kiritasiz ──
+      - key: BOT_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_CHAT_IDS
+        sync: false
+      - key: WEBAPP_URL # Mini App manzili (Vercel'dagi frontend)
+        sync: false
+      - key: CORS_ORIGINS # xuddi shu manzil
+        sync: false
+
+      # ── Biznes sozlamalari ──
+      - key: CURRENCY
+        value: UZS
+      - key: CURRENCY_SYMBOL
+        value: so'm
+      - key: DELIVERY_FEE
+        value: '15000'
+      - key: FREE_DELIVERY_FROM
+        value: '150000'
+
+      # ── Brend ──
+      - key: BRAND_NAME
+        value: Pizza Hub
+      - key: WORK_HOURS
+        value: 10:00 – 23:00
+      - key: DELIVERY_ETA_MINUTES
+        value: '30'
+      - key: SUPPORT_USERNAME
+        sync: false
+      - key: SUPPORT_PHONE
+        sync: false
+
+      # ── To'lov rekvizitlari ──
+      - key: PAYMENT_CARD_NUMBER
+        sync: false
+      - key: PAYMENT_CARD_HOLDER
+        sync: false
+
+      # ── Xavfsizlik ──
+      - key: ADMIN_SETUP_DISABLED
+        value: 'true'
+# ───────────────────────────────────────────────────────────────
+#  ⚠️ BEPUL TARIF HAQIDA
+#
+#  Render'ning bepul web-servisi 15 daqiqa KIRUVCHI so'rovsiz uxlaydi.
+#  Long polling — chiquvchi trafik, u servisni uyg'oq tutmaydi.
+#  Ya'ni bot 15 daqiqadan keyin javob bermay qo'yadi va uyg'onishi ~50 s oladi.
+#
+#  Yechimlar:
+#    1) Starter tarif ($7/oy) — hech qachon uxlamaydi, eng ishonchli yo'l
+#    2) Tashqi ping xizmati (masalan UptimeRobot) har 10 daqiqada
+#       https://<servis>.onrender.com/health ni chaqirib tursin
+#
+#  Agar bepul tarifda qolmoqchi bo'lsangiz — backend'ni Vercel'ga qo'ying:
+#  u serverless bo'lgani uchun uxlamaydi va sovuq start ~1-2 s (50 s emas).
+# ───────────────────────────────────────────────────────────────

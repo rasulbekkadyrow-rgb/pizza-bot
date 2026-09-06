@@ -19,6 +19,47 @@ Backend uchun esa **alohida loyiha** kerak:
 
 ---
 
+## Qayerga joylashtirish kerak? (Vercel yoki Render)
+
+**Frontend** — har doim Vercel (Next.js uchun eng yaxshi).
+
+**Backend** uchun tanlov bor, va u tarifga bog'liq:
+
+| | Vercel (serverless) | Render Free | Render Starter ($7/oy) |
+|---|---|---|---|
+| Bot rejimi | webhook | long polling | long polling |
+| Uxlaydimi | yo'q | **15 daqiqada uxlaydi** | yo'q |
+| Sovuq start | ~1–2 s | **~50 s** | yo'q |
+| DB heartbeat / warm pool | ishlamaydi | ishlaydi | ishlaydi |
+| Katalog keshi | har instansiyada alohida | tirik qoladi | tirik qoladi |
+| Narxi | bepul | bepul | $7/oy |
+
+### Tavsiya
+
+- **Bepul qolmoqchi bo'lsangiz → Vercel.** Render'ning bepul tarifi 15 daqiqadan
+  keyin uxlaydi va uyg'onishi ~50 soniya — bot o'lik ko'rinadi. Vercel'da sovuq
+  start bor, lekin u 1–2 soniya.
+- **$7/oy to'lay olsangiz → Render Starter.** Doimiy jarayon bo'lgani uchun
+  long polling ishlaydi (webhook sozlash kerak emas), DB heartbeat va isitilgan
+  ulanishlar saqlanadi — ya'ni men qilgan tezlik optimizatsiyalari to'liq ishlaydi.
+
+### Render'ga qo'yish
+
+Repoda [`render.yaml`](render.yaml) tayyor:
+
+Render → **New** → **Blueprint** → shu repo → **Apply**
+
+Render servisni o'zi yaratadi, faqat maxfiy o'zgaruvchilarni (`BOT_TOKEN`,
+`DATABASE_URL`, `ADMIN_CHAT_IDS`, `WEBAPP_URL`) bir marta kiritasiz.
+
+Region `ohio` qilib qo'yilgan — Neon bazangiz ham `us-east-2` (Ohio) da,
+shuning uchun SQL so'rovlar ~150 ms o'rniga ~2 ms bo'ladi.
+
+> Bepul tarifda qolsangiz, UptimeRobot kabi xizmat bilan har 10 daqiqada
+> `https://<servis>.onrender.com/health` ni chaqirib turing — servis uxlamaydi.
+
+---
+
 Ikkita Vercel loyihasi yaratiladi (bitta repodan):
 
 | Loyiha | Root papka | Nima |
