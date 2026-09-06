@@ -15,7 +15,8 @@
     "db:seed": "node src/database/seed.js",
     "db:reset": "node src/database/migrate.js --force && node src/database/seed.js",
     "telegram:setup": "node scripts/setup-telegram.js",
-    "vercel-build": "echo 'backend: build kerak emas'"
+    "vercel-build": "echo 'backend: build kerak emas'",
+    "build": "echo 'backend: qurish kerak emas'"
   },
   "dependencies": {
     "compression": "^1.7.4",
