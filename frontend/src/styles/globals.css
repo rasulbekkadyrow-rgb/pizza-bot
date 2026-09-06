@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   Dizayn tokenlari
+   Telegram `themeParams` qiymatlari TelegramProvider tomonidan
+   --tg-* o'zgaruvchilariga yoziladi; bu yerda ular ustiga
+   xavfsiz fallback'lar bilan o'z palitramiz quriladi.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Iliq, "xamir" ohangidagi neytrallar — sovuq kulrang o'rniga */
+  --c-bg: 250 246 240;        /* sahifa foni      */
+  --c-surface: 255 255 255;   /* kartochka        */
+  --c-elevated: 255 255 255;  /* modal / sheet    */
+  --c-line: 235 227 216;      /* chegara          */
+  --c-ink: 26 20 16;          /* asosiy matn      */
+  --c-muted: 138 125 114;     /* ikkilamchi matn  */
+
+  --font-sans: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Telegram bo'lmaganda (brauzerda ochilganda) ishlatiladigan zaxira */
+  --tg-viewport-height: 100dvh;
+  --tg-viewport-stable-height: 100dvh;
+}
+
+:root[data-theme='dark'] {
+  --c-bg: 22 18 16;
+  --c-surface: 34 28 25;
+  --c-elevated: 43 35 31;
+  --c-line: 62 51 45;
+  --c-ink: 252 249 245;
+  --c-muted: 154 140 129;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+  overscroll-behavior-y: none;
+}
+
+body {
+  @apply bg-bg font-sans text-ink antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Telegram WebView'da "pull-to-refresh"ni bloklash */
+#app-root {
+  min-height: var(--tg-viewport-stable-height, 100dvh);
+}
+
+/* ── Yordamchi klasslar ─────────────────────────────────────── */
+@layer components {
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Gorizontal filtr lentasi uchun "snap" skroll */
+  .snap-row {
+    scroll-snap-type: x mandatory;
+  }
+  .snap-row > * {
+    scroll-snap-align: start;
+  }
+
+  /* Bosilganda iOS'dagidek "cho'kish" effekti */
+  .press {
+    @apply transition-transform duration-150 ease-ios active:scale-[0.97];
+  }
+
+  /* Yuklanish skeleti */
+  .skeleton {
+    @apply relative overflow-hidden bg-line/60;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--c-surface) / 0.65),
+      transparent
+    );
+  }
+
+  /* Shisha effektli panel (header / bottom nav) */
+  .glass {
+    background-color: rgb(var(--c-surface) / 0.82);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* Sarlavhalar uchun brend gradienti */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-500 to-amber-500 bg-clip-text text-transparent;
+  }
+
+  /* Hero fonidagi ulkan "PIZZA" yozuvi — konturli variant */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(255 255 255 / 0.5);
+  }
+
+  /* Karusel doirasi ostidagi issiq nur */
+  .disc-glow {
+    background: radial-gradient(circle at 50% 45%, rgb(255 214 130 / 0.9), transparent 62%);
+  }
+}
+
+/* Modal ochilganda fon skrollini to'xtatish */
+body.is-locked {
+  overflow: hidden;
+  touch-action: none;
+}

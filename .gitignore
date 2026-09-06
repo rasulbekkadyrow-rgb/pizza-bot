@@ -1,0 +1,37 @@
+# ── Bog'liqliklar ──────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Maxfiy ma'lumotlar (HECH QACHON commit qilinmasin!) ────────
+# Bot tokeni, baza paroli va to'lov rekvizitlari shu fayllarda.
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+
+# ── Next.js ────────────────────────────────────────────────────
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# ── Loglar va vaqtinchalik fayllar ─────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+.cache/
+tmp/
+
+# ── Deploy ─────────────────────────────────────────────────────
+.vercel
+
+# ── Muharrir va OS ─────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,18 @@
+{
+  "name": "pizza-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pizza Hub — Telegram Mini App: backend + frontend + tunnel bitta buyruq bilan",
+  "scripts": {
+    "start": "node start.js",
+    "stop": "node stop.js",
+    "build": "npm --prefix frontend run build",
+    "setup": "npm install && npm --prefix backend install && npm --prefix frontend install && npm run build",
+    "autostart:on": "powershell -ExecutionPolicy Bypass -File scripts/autostart.ps1 -Action install",
+    "autostart:off": "powershell -ExecutionPolicy Bypass -File scripts/autostart.ps1 -Action remove",
+    "url": "node -e \"console.log(require('fs').readFileSync('logs/current-url.txt','utf8'))\""
+  },
+  "dependencies": {
+    "cloudflared": "^0.7.1"
+  }
+}
