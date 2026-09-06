@@ -134,13 +134,22 @@ async function main() {
     process.exit(1);
   }
 
-  step(2, `Backend loyihasi (${API_PROJECT}) bog‘lanmoqda...`);
+  step(2, `Backend loyihasi (${API_PROJECT}) tayyorlanmoqda...`);
+
+  // Avval loyihani yaratamiz/bog'laymiz. `link` ba'zi CLI versiyalarida
+  // mavjud bo'lmagan loyihani yarata olmaydi — shuning uchun muvaffaqiyatsizlik
+  // halokatli emas: keyingi `deploy` loyihani baribir yaratadi.
   const linkApi = await vercel(['link', '--yes', '--project', API_PROJECT], { cwd: BACKEND });
   if (linkApi.code !== 0) {
-    console.error(`✖ Bog‘lab bo‘lmadi: ${linkApi.err}`);
-    process.exit(1);
+    warn('Bog‘lab bo‘lmadi — loyiha birinchi deploy paytida yaratiladi');
+    const first = await vercel(['deploy', '--yes'], { cwd: BACKEND });
+    if (first.code !== 0) {
+      console.error(`✖ Backend loyihasini yaratib bo‘lmadi:
+${first.err || first.out}`);
+      process.exit(1);
+    }
   }
-  ok('Bog‘landi');
+  ok('Loyiha tayyor');
 
   // Ishlab chiqarish uchun xavfsiz qiymatlar
   const backendEnv = {
@@ -170,11 +179,16 @@ async function main() {
   ok(`API: ${apiUrl}`);
 
   // ── 5. Frontend ──────────────────────────────────────────────
-  step(5, `Frontend loyihasi (${APP_PROJECT}) bog‘lanmoqda...`);
+  step(5, `Frontend loyihasi (${APP_PROJECT}) tayyorlanmoqda...`);
   const linkApp = await vercel(['link', '--yes', '--project', APP_PROJECT], { cwd: FRONTEND });
   if (linkApp.code !== 0) {
-    console.error(`✖ Bog‘lab bo‘lmadi: ${linkApp.err}`);
-    process.exit(1);
+    warn('Bog‘lab bo‘lmadi — loyiha birinchi deploy paytida yaratiladi');
+    const first = await vercel(['deploy', '--yes'], { cwd: FRONTEND });
+    if (first.code !== 0) {
+      console.error(`✖ Frontend loyihasini yaratib bo‘lmadi:
+${first.err || first.out}`);
+      process.exit(1);
+    }
   }
 
   // BACKEND_URL build paytida o'qiladi (next.config.mjs → rewrites)
