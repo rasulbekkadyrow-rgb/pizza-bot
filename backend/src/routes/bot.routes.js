@@ -17,12 +17,22 @@ function registerBotHandlers(bot) {
   // ── Kirish/log middleware ──────────────────────────────────
   bot.use(async (ctx, next) => {
     const startedAt = Date.now();
+
+    // `ctx.updateType` noma'lum turdagi update'da xato tashlaydi —
+    // shuning uchun uni oldindan, xavfsiz o'qib olamiz.
+    let type = 'unknown';
+    try {
+      type = ctx.updateType;
+    } catch {
+      logger.debug('Noma’lum turdagi update — e’tiborsiz qoldirildi', {
+        updateId: ctx.update?.update_id,
+      });
+      return undefined;
+    }
+
     await next();
-    logger.debug('Update qayta ishlandi', {
-      type: ctx.updateType,
-      from: ctx.from?.id,
-      ms: Date.now() - startedAt,
-    });
+    logger.debug('Update qayta ishlandi', { type, from: ctx.from?.id, ms: Date.now() - startedAt });
+    return undefined;
   });
 
   // ── Buyruqlar ──────────────────────────────────────────────

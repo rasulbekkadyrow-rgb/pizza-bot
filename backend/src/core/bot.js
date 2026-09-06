@@ -16,10 +16,24 @@ const bot = new Telegraf(config.telegram.token, {
   handlerTimeout: 30_000,
 });
 
-/** Telegram API xatolarini yumshoq qayta ishlash (bot yiqilmasligi kerak). */
+/**
+ * Telegram API xatolarini yumshoq qayta ishlash (bot yiqilmasligi kerak).
+ *
+ * DIQQAT: `ctx.updateType` ning O'ZI xato tashlashi mumkin — Telegram
+ * biz bilmaydigan yangi turdagi update yuborsa, Telegraf uni aniqlay olmaydi.
+ * Agar buni ushlamasak, xato ishlovchisining ichidagi xato jarayonni yiqitadi.
+ */
 bot.catch((err, ctx) => {
+  let updateType = 'unknown';
+  try {
+    updateType = ctx?.updateType ?? 'unknown';
+  } catch {
+    /* noma'lum update turi — bu ham normal holat */
+  }
+
   logger.error('Telegraf handler xatosi', {
-    updateType: ctx?.updateType,
+    updateType,
+    updateId: ctx?.update?.update_id,
     from: ctx?.from?.id,
     message: err?.message,
     stack: err?.stack,
