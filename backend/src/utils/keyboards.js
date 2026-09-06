@@ -43,12 +43,21 @@ function canOpenWebApp() {
  * Adminlar uchun qo'shimcha qator: «👑 Admin panel».
  */
 function mainMenu(isAdmin = false) {
+  /**
+   * DIQQAT: bu yerda `web_app` tugmasi ATAYLAB ishlatilmaydi.
+   *
+   * Reply-klaviaturaga qo'yilgan manzil xabar bilan birga "muhrlanadi" —
+   * domen o'zgarsa (tunnel qayta ochilsa yoki yangi domenga ko'chsak),
+   * chatdagi ESKI tugmalar o'lik havolaga ishora qilib qoladi va
+   * foydalanuvchi "bot ochilmayapti" holatiga tushadi.
+   *
+   * Shuning uchun bu oddiy matnli tugma: bosilganda bot HAR SAFAR
+   * joriy manzil bilan yangi inline tugma yuboradi (`onMenu`).
+   * Chatning pastidagi ko'k «Menyu» tugmasi esa global va har
+   * ishga tushishda yangilanadi — u bir bosishlik yo'l bo'lib qoladi.
+   */
   const rows = [
-    [
-      canOpenWebApp()
-        ? Markup.button.webApp('🍕 Buyurtma berish', config.telegram.webAppUrl)
-        : '🍕 Buyurtma berish',
-    ],
+    ['🍕 Buyurtma berish'],
     ['📋 Mening buyurtmalarim', '📞 Aloqa'],
   ];
 

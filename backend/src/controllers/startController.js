@@ -57,6 +57,14 @@ async function onStart(ctx) {
   // ── 1) DARHOL javob ─────────────────────────────────────────
   await ctx.replyWithHTML(WELCOME(name), { ...kb.mainMenu(isEnvAdmin) });
 
+  // Bir bosishlik yo'l: joriy manzil bilan yangi inline tugma.
+  // (Reply-klaviaturaga havola qo'yilmaydi — u eskirib qolardi.)
+  if (kb.canOpenWebApp()) {
+    await ctx.replyWithHTML('👇 Menyuni oching va tanlashni boshlang', {
+      ...kb.openAppInline('🍕 Menyuni ochish'),
+    });
+  }
+
   // ── 2) Qolgan hammasi fonda ─────────────────────────────────
   void finishStart(ctx, isEnvAdmin).catch((err) =>
     logger.error('/start fon vazifasi bajarilmadi', err)
@@ -98,7 +106,12 @@ async function finishStart(ctx, isEnvAdmin) {
   }
 }
 
-/** /menu va «🍕 Buyurtma berish» */
+/**
+ * /menu va «🍕 Buyurtma berish»
+ *
+ * Har chaqirilganda JORIY manzil bilan yangi inline tugma yuboradi —
+ * shuning uchun domen o'zgargan bo'lsa ham havola har doim tirik bo'ladi.
+ */
 async function onMenu(ctx) {
   if (!kb.canOpenWebApp()) {
     return ctx.replyWithHTML(
