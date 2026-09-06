@@ -1,7 +1,17 @@
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+
+  /**
+   * Repo ildizida ham, `frontend/` da ham package-lock.json bor.
+   * Busiz Next ildizni noto'g'ri tanlab, ogohlantirish beradi va
+   * fayllarni kuzatishda (tracing) xatoga yo'l qo'yishi mumkin.
+   */
+  outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)),
 
   images: {
     remotePatterns: [
