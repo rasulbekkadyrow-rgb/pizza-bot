@@ -1,5 +1,24 @@
 # 🚀 Vercel'ga deploy qilish
 
+## ⚠️ Eng ko'p uchraydigan xato
+
+```
+sh: line 1: next: command not found
+Error: Command "npm run build" exited with 127
+```
+
+Sabab: Vercel repo **ildizidan** qurmoqda, Next.js esa `frontend/` ichida.
+
+**Yechim — Vercel loyihasida Root Directory ni ko'rsating:**
+
+Vercel → loyiha → **Settings** → **Build and Deployment** → *Root Directory* →
+`frontend` → **Save** → **Deployments** → oxirgisida `⋯` → **Redeploy**
+
+Backend uchun esa **alohida loyiha** kerak:
+*Add New* → *Project* → xuddi shu repo → Root Directory = `backend` → Deploy
+
+---
+
 Ikkita Vercel loyihasi yaratiladi (bitta repodan):
 
 | Loyiha | Root papka | Nima |

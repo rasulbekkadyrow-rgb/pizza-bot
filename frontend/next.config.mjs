@@ -25,6 +25,17 @@ const nextConfig = {
    */
   async rewrites() {
     const backend = (process.env.BACKEND_URL || 'http://127.0.0.1:4000').replace(/\/+$/, '');
+
+    // Ishlab chiqarishda BACKEND_URL bo'lmasa, ilova localhost'ga murojaat qilib
+    // qoladi va hech narsa yuklanmaydi. Buni build log'ida darhol ko'rsatamiz.
+    if (process.env.VERCEL && !process.env.BACKEND_URL) {
+      console.warn(
+        '\n⚠️  BACKEND_URL o‘rnatilmagan!\n' +
+          '   Vercel → Settings → Environment Variables → BACKEND_URL = https://<backend>.vercel.app\n' +
+          '   Aks holda API so‘rovlari localhost:4000 ga ketadi va ishlamaydi.\n'
+      );
+    }
+
     return [{ source: '/api/:path*', destination: `${backend}/api/:path*` }];
   },
 
