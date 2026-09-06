@@ -19,6 +19,39 @@ Backend uchun esa **alohida loyiha** kerak:
 
 ---
 
+## Uxlamaydigan bepul server: Northflank
+
+Render'ning bepul tarifi 15 daqiqada uxlaydi. **Northflank'ning bepul "Sandbox"
+tarifi uxlamaydi** ("always-on compute — no sleeping") va karta talab qilmaydi.
+
+Bepul tarifda: **2 ta servis + 1 ta baza + 2 ta cron**.
+
+### Northflank'ga qo'yish
+
+1. [app.northflank.com](https://app.northflank.com) → GitHub bilan kiring
+2. **Create new** → **Service** → **Deployment** → **Repository**
+3. Repo: `rasulbekkadyrow-rgb/pizza-bot`, branch `main`
+4. Build type: **Dockerfile**
+   - Dockerfile path: `/backend/Dockerfile`
+   - Build context: `/backend`
+5. Port: `4000`, protocol HTTP, public
+6. Environment variables — `.env` blokini joylashtiring (`PORT` va `WEBAPP_URL` siz)
+7. **Create service**
+
+Bot long polling'da ishlaydi — webhook sozlash kerak emas.
+
+### Nega Dockerfile
+
+[`backend/Dockerfile`](backend/Dockerfile) har qanday konteyner platformasida
+bir xil ishlaydi: Northflank, Render, Fly.io, Railway, Cloud Run, oddiy VPS.
+Ya'ni platformani almashtirsangiz, hech narsani qayta yozish kerak emas.
+
+`dumb-init` PID 1 sifatida ishlaydi va SIGTERM ni to'g'ri uzatadi — shuning
+uchun platforma servisni to'xtatganda graceful shutdown (bot to'xtaydi,
+DB pool yopiladi) ishlaydi.
+
+---
+
 ## Qayerga joylashtirish kerak? (Vercel yoki Render)
 
 **Frontend** — har doim Vercel (Next.js uchun eng yaxshi).
