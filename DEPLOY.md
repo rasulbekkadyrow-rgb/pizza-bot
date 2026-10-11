@@ -19,6 +19,100 @@ Backend uchun esa **alohida loyiha** kerak:
 
 ---
 
+## Backend → Dokploy (o'z VPS'ingizda)
+
+Dokploy — o'z serveringizga o'rnatiladigan panel (Vercel/Heroku'ning
+o'xshashi). Backend u yerda doimiy konteyner bo'lib ishlaydi: bot **long
+polling**da, DB heartbeat va katalog keshi tirik — uxlamaydi.
+
+Shart: Dokploy o'rnatilgan VPS (kamida 2 GB RAM).
+
+### 1. Ilova yaratish
+
+Dokploy → **Projects** → loyiha → **Create Service** → **Application**
+
+**General → Provider: GitHub**
+
+| Maydon | Qiymat |
+|---|---|
+| Repository | `rasulbekkadyrow-rgb/pizza-bot` |
+| Branch | `main` |
+| Build Path | `/backend` |
+| Watch Paths | `backend/**` (faqat backend o'zgarsa qayta deploy) |
+
+**General → Build Type: Dockerfile**
+
+| Maydon | Qiymat |
+|---|---|
+| Dockerfile Path | `Dockerfile` |
+| Docker Context Path | `backend` |
+| Docker Build Stage | bo'sh |
+
+> Docker Context Path repo **ildiziga** nisbatan yoziladi. `.` yozsangiz
+> build `package.json` ni topa olmay yiqiladi.
+
+### 2. Environment
+
+**Environment** tabiga joylashtiring:
+
+```env
+BOT_TOKEN=...
+DATABASE_URL=...
+ADMIN_CHAT_IDS=...
+WEBAPP_URL=https://pizza-app.vercel.app
+CORS_ORIGINS=https://pizza-app.vercel.app
+ADMIN_SETUP_DISABLED=true
+```
+
+- `PUBLIC_URL` ni **qo'ymang** — bo'sh bo'lsa bot long polling'da ishlaydi.
+- `PORT` va `NODE_ENV` Dockerfile'da bor (`4000`, `production`).
+- `CORS_ORIGINS` da Vercel manzili bo'lmasa, frontend so'rovlari
+  `CORS: ... ruxsat etilmagan` xatosi bilan rad etiladi.
+- Qolgan ixtiyoriy o'zgaruvchilar — [`backend/.env.example`](backend/.env.example).
+
+### 3. Domen
+
+**Domains** → **Add Domain**
+
+| Maydon | Qiymat |
+|---|---|
+| Host | `api.sizningdomen.uz` (DNS'da A yozuvi → VPS IP) |
+| Path | `/` |
+| Container Port | `4000` |
+| HTTPS | yoqilgan, Certificate: Let's Encrypt |
+
+Domen bo'lmasa **Generate Domain** (`*.traefik.me`) ham ishlaydi, lekin u faqat
+HTTP — sinov uchun yetadi, ishlab chiqarishda o'z domeningizni ulang.
+
+**Deploy** → **Logs** da `HTTP server ishga tushdi` chiqishi kerak. Tekshirish:
+
+```bash
+curl https://api.sizningdomen.uz/health
+# {"ok":true,...,"runtime":"server"}
+```
+
+### 4. Frontend'ni Dokploy'ga ulash
+
+Vercel → `pizza-app` → **Settings** → **Environment Variables**:
+`BACKEND_URL` = `https://api.sizningdomen.uz` → **Redeploy**
+(`BACKEND_URL` build paytida o'qiladi — redeploy shart).
+
+### 5. Laptopni o'chirish — majburiy
+
+Telegram bitta botga faqat **bitta** long polling ulanishiga ruxsat beradi.
+Laptopda ham bot ishlab tursa, ikkalasi `409 Conflict` bilan bir-birini
+uzib turadi, laptop esa menyu tugmasini o'z tunnel manziliga qaytarib qo'yadi:
+
+```bash
+npm run autostart:off
+npm stop
+```
+
+Shundan keyin backend Dokploy'ni qayta ishga tushirganda menyu tugmasini
+`WEBAPP_URL` (Vercel) ga o'zi bog'laydi.
+
+---
+
 ## Uxlamaydigan bepul server: Northflank
 
 Render'ning bepul tarifi 15 daqiqada uxlaydi. **Northflank'ning bepul "Sandbox"

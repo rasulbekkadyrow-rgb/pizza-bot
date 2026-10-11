@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════
 #
 #  Bu Dockerfile har qanday konteyner platformasida ishlaydi:
-#  Northflank, Render, Fly.io, Railway, Google Cloud Run, oddiy VPS.
+#  Dokploy, Northflank, Render, Fly.io, Railway, Google Cloud Run, oddiy VPS.
 #
 #  Doimiy jarayon bo'lgani uchun bot LONG POLLING rejimida ishlaydi —
 #  webhook sozlash kerak emas, DB heartbeat va katalog keshi tirik qoladi.
